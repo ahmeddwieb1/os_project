@@ -13,12 +13,13 @@ public class LFUPageReplacement {
         display.printHeader();
 
         // Get user input
-//        int frames = input.getFrameCount();
-//        int[] pages = input.getPageReferenceString();
+        int frames = input.getFrameCount();
+        int[] pages = input.getPageReferenceString();
 //        int[] pages = {1,2,3,4, 7, 0,1,2,0,3,0, 4, 2, 3,0, 3,0, 3,2,
 //                1, 2,0,1, 7,0, 1};
-        int[] pages ={ 1, 2, 3, 4, 2, 1, 5 };
-        int frames = 3;
+//        int[] pages = { 1, 2, 3, 4, 2, 1, 5 };
+//        int[] pages = { 5, 0, 1, 3, 2, 4, 1, 0, 5 };
+//        int frames = 4;
         display.printPageReferenceString(pages);
 
         int pagefaults = pageFaults(pages.length - 1, frames, pages);
@@ -29,78 +30,59 @@ public class LFUPageReplacement {
                 + (pages.length - pagefaults));
         double faultRate = (pagefaults * 100.0) / pages.length;
         System.out.println("Fault Rate = " + faultRate + "%");
-
     }
-
-    /* Counts no. of page faults */
     static int pageFaults(int n, int c, int[] pages) {
-        // Initialise count to 0
-        int count = 0;
+        int faults = 0;
 
-        // To store elements in memory of size c
-        List<Integer> memory = new ArrayList<Integer>();
-        // To store frequency of pages
-        Map<Integer, Integer> freq
-                = new HashMap<Integer, Integer>();
+        List<Integer> memory = new ArrayList<>();
+        Map<Integer, Integer> freq = new HashMap<>();
 
-        for (int i = 0; i <= n ; i++) {
-            // Find if element is present in memory or not
-            int idx = memory.indexOf(pages[i]);
+        System.out.println("\n--- LFU Simulation Steps ---\n");
 
-            // If element is not present
+        for (int i = 0; i <= n; i++) {
+            int currentPage = pages[i];
+            boolean isFault = false;
+
+            int idx = memory.indexOf(currentPage);
+
+            // PAGE FAULT
             if (idx == -1) {
-                // If memory is full
-                if (memory.size() == c) {
-                    // Decrease the frequency
-                    int leastFreqPage = memory.get(0);
-                    freq.put(leastFreqPage,
-                            freq.get(leastFreqPage) - 1);
+                isFault = true;
 
-                    // Remove the first element as
-                    // It is least frequently used
-                    memory .remove(0);
+                if (memory.size() == c) {
+                    memory.remove(0);
                 }
 
-                // Add the element at the end of memory
-                memory .add(pages[i]);
-//               for (int j = 0 ; j <= c; j++) {
-//                   System.out.print(memory .get(j)+" ");
-//               }
-                // Increase its frequency
-                freq.put(pages[i],
-                        freq.getOrDefault(pages[i], 0) + 1);
-
-                // Increment the count
-                count++;
-            } else {
-// If element is present Remove the element And add it at the end
-// Increase its frequency
-                int page = memory .remove(idx);
-                memory .add(page);
-                freq.put(page, freq.get(page) + 1);
+                memory.add(currentPage);
+                freq.put(currentPage, freq.getOrDefault(currentPage, 0) + 1);
+                faults++;
+            }
+            // PAGE HIT
+            else {
+                freq.put(currentPage, freq.get(currentPage) + 1);
             }
 
-            // Compare frequency with other pages
-            // starting from the 2nd last page
-            int k = memory .size() - 2;
-
-            // Sort the pages based on their frequency
-            // And time at which they arrive
-            // if frequency is same
-            // then, the page arriving first must be placed
-            // first
-            while (k >= 0
-                    && freq.get(memory .get(k))
-                    > freq.get(memory .get(k + 1))) {
-                Collections.swap(memory , k, k + 1);
+            int k = memory.size() - 2;
+            while (k >= 0 && freq.get(memory.get(k)) > freq.get(memory.get(k + 1))) {
+                Collections.swap(memory, k, k + 1);
                 k--;
             }
+
+            // 🔹 PRINT STEP DETAILS
+            System.out.println("Page: " + currentPage +
+                    (isFault ? " → FAULT" : " → HIT"));
+
+            System.out.println("Memory: " + memory);
+
+            System.out.print("Frequencies: { ");
+            for (int p : memory) {
+                System.out.print(p + "=" + freq.get(p) + " ");
+            }
+            System.out.println("}");
+
+            System.out.println("----------------------------------");
         }
 
-        // Return total page faults
-        return count;
+        return faults;
     }
-
-    /* Driver program to test pageFaults function*/
-
 }
