@@ -16,7 +16,7 @@ public class FIFo_main {
         Scanner sc = new Scanner(System.in);
 
         try {
-            //Number of frames in physical memory and input validation
+            // Number of frames in physical memory and input validation
             int frameCount = 0;
             while (frameCount <= 0) {
                 System.out.print("Enter number of frames (positive integer): ");
@@ -45,23 +45,20 @@ public class FIFo_main {
             int[] pageRequests = new int[n];
             System.out.println("Enter page numbers (non-negative integers):");
             for (int i = 0; i < n; i++) {
-             /*   while (true) {
+                while (true) {
                     if (sc.hasNextInt()) {
                         int page = sc.nextInt();
                         if (page < 0) {
                             System.out.println("Page number cannot be negative. Enter again:");
                         } else {
-
+                            pageRequests[i] = page;
                             break;
                         }
                     } else {
                         System.out.println("Invalid input. Enter a non-negative integer:");
                         sc.next();
                     }
-                } */
-
-                //Filling page requests with sequential numbers for simplicity
-                pageRequests[i] = i;
+                }
             }
 
             // Physical memory
@@ -75,58 +72,58 @@ public class FIFo_main {
             Queue<Integer> fifoQueue = new LinkedList<>();
 
             int pageFaults = 0;
+            int pageHits = 0;
 
             System.out.println("\nSimulation starting...\n");
 
             for (int page : pageRequests) {
                 PageTableEntry entry = pageTable.getOrDefault(page, new PageTableEntry());
 
-              /*  if (entry.valid) {
+                if (entry.valid) {
+                    // Page HIT - page is already in memory
                     System.out.println("Page " + page + " HIT");
-                } else { */
-                System.out.println("Page " + page + " FAULT");
-                pageFaults++;
-
-                if (fifoQueue.size() < frameCount) {
-                    // Empty frame available
-                    for (int i = 0; i < frames.length; i++) {
-                        if (frames[i] == -1) {
-                            frames[i] = page;
-                            entry.frameNumber = i;
-                            entry.valid = true;
-                            fifoQueue.add(page);
-                            break;
-                        }
-                    }
+                    pageHits++;
                 } else {
-                    //frame is full -> evict the oldest page (FIFO)
-                    int victimPage = fifoQueue.poll();
-                    int victimFrame = pageTable.get(victimPage).frameNumber;
+                    // Page FAULT - page needs to be loaded
+                    System.out.println("Page " + page + " FAULT");
+                    pageFaults++;
 
-                    System.out.println("Removing page " + victimPage + " from frame " + victimFrame);
+                    if (fifoQueue.size() < frameCount) {
+                        // Empty frame available
+                        for (int i = 0; i < frames.length; i++) {
+                            if (frames[i] == -1) {
+                                frames[i] = page;
+                                entry.frameNumber = i;
+                                entry.valid = true;
+                                fifoQueue.add(page);
+                                break;
+                            }
+                        }
+                    } else {
+                        // Frame is full -> evict the oldest page (FIFO)
+                        int victimPage = fifoQueue.poll();
+                        int victimFrame = pageTable.get(victimPage).frameNumber;
 
+                        System.out.println("Removing page " + victimPage + " from frame " + victimFrame);
 
-                    //replace the page
-                    frames[victimFrame] = page;
-                    entry.frameNumber = victimFrame;
-                    entry.valid = true;
-                    fifoQueue.add(page);
+                        // Replace the page
+                        frames[victimFrame] = page;
+                        entry.frameNumber = victimFrame;
+                        entry.valid = true;
+                        fifoQueue.add(page);
 
+                        // Update the page table for the evicted page
+                        PageTableEntry victimEntry = pageTable.get(victimPage);
+                        victimEntry.valid = false;
+                        victimEntry.frameNumber = -1;
+                        pageTable.put(victimPage, victimEntry);
+                    }
 
-                    //udate the page table for the evicted page
-                    PageTableEntry victimEntry = pageTable.get(victimPage);
-                    victimEntry.valid = false;
-                    victimEntry.frameNumber = -1;
-                    pageTable.put(victimPage, victimEntry);
+                    // Update the page table for the current page
+                    pageTable.put(page, entry);
                 }
-                //}
 
-
-                //update the page table for the current page
-                pageTable.put(page, entry);
-
-
-                //print current memory state
+                // Print current memory state
                 System.out.print("Frames: ");
                 for (int f : frames) {
                     if (f == -1) System.out.print("- ");
@@ -135,7 +132,10 @@ public class FIFo_main {
                 System.out.println("\n");
             }
 
+            System.out.println("=================================");
             System.out.println("Total Page Faults: " + pageFaults);
+            System.out.println("Total Page Hits: " + pageHits);
+            System.out.println("Hit Rate: " + String.format("%.2f", (pageHits * 100.0 / pageRequests.length)) + "%");
 
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
