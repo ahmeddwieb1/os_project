@@ -9,6 +9,7 @@ public class Main {
         System.out.println("--- Virtual Memory MFU Simulator (Robust Version) ---");
 
         // 1. Get Frame Count (Must be > 0)
+
         int capacity = getValidPositiveInt(scanner, "Enter the number of frames: ");
 
         // 2. Get Reference Count (Must be > 0)
