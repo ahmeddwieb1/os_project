@@ -4,7 +4,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
-public class Main {
+public class Clock_Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int frameCount = 0;

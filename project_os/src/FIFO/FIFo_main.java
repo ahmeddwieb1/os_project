@@ -11,7 +11,7 @@ class PageTableEntry {
     }
 }
 
-public class FIFo {
+public class FIFo_main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
