@@ -1,6 +1,8 @@
+package utils;
+
 import java.util.Scanner;
 
-class InputHandler {
+public class InputHandler {
     private Scanner scanner;
 
     public InputHandler() {
