@@ -1,3 +1,5 @@
+package LRU;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,7 +34,7 @@ class LRUCache {
     private void handlePageHit(int page) {
         stats.incrementPageHits();
         cache.get(page); // Updates access order
-        System.out.println("Page " + page + " → HIT ✓");
+        System.out.println("LRU.Page " + page + " → HIT ✓");
     }
 
     private void handlePageFault(int page) {
@@ -40,9 +42,9 @@ class LRUCache {
 
         if (cache.size() >= capacity) {
             int lruPage = cache.keySet().iterator().next();
-            System.out.println("Page " + page + " → MISS ✗ (Replaced: " + lruPage + ")");
+            System.out.println("LRU.Page " + page + " → MISS ✗ (Replaced: " + lruPage + ")");
         } else {
-            System.out.println("Page " + page + " → MISS ✗ (Empty frame)");
+            System.out.println("LRU.Page " + page + " → MISS ✗ (Empty frame)");
         }
 
         cache.put(page, page);

@@ -1,3 +1,5 @@
+package LRU;
+
 class DisplayManager {
 
     public void printHeader() {
@@ -13,7 +15,7 @@ class DisplayManager {
     }
 
     public void printPageReferenceString(int[] pages) {
-        System.out.print("Page Reference String: ");
+        System.out.print("LRU.Page Reference String: ");
         for (int i = 0; i < pages.length; i++) {
             System.out.print(pages[i]);
             if (i < pages.length - 1) System.out.print(" → ");

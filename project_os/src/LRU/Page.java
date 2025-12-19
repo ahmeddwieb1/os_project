@@ -1,3 +1,5 @@
+package LRU;
+
 class Page {
     private int pageNumber;
     private int lastAccessTime;

@@ -1,3 +1,5 @@
+package LRU;
+import utils.InputHandler;
 public class LRUPageReplacement {
 
     public static void main(String[] args) {

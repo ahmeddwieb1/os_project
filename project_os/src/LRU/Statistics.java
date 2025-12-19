@@ -1,3 +1,5 @@
+package LRU;
+
 class Statistics {
     private int pageFaults;
     private int pageHits;
@@ -27,8 +29,8 @@ class Statistics {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("         PERFORMANCE STATISTICS");
         System.out.println("=".repeat(50));
-        System.out.println("Total Page Faults:  " + pageFaults);
-        System.out.println("Total Page Hits:    " + pageHits);
+        System.out.println("Total LRU.Page Faults:  " + pageFaults);
+        System.out.println("Total LRU.Page Hits:    " + pageHits);
         int total = pageFaults + pageHits;
         double hitRatio = total > 0 ? (double) pageHits / total * 100 : 0;
         double faultRatio = total > 0 ? (double) pageFaults / total * 100 : 0;
